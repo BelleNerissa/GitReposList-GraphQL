@@ -29,7 +29,6 @@ const queryRequest = (countPerPage, searchQuery, paginationKeyword, paginationSt
                     }
                 }
             }
-            
           }
         }
     `

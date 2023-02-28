@@ -23,7 +23,7 @@ function App() {
   const fetchData = useCallback(() => {
     fetch("https://api.github.com/graphql", {
       headers: {
-        authorization: `Bearer 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`,
+        authorization: `Bearer ${process.env.REACT_APP_GITHUB_TOKEN}`,
       },
       method: 'POST',
       body: JSON.stringify(query(countPerPage, searchQuery, paginationKeyword, paginationString))
