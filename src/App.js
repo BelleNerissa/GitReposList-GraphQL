@@ -9,9 +9,10 @@ import ExportCSV from './exportCSV';
 
 function App() {
   const [repoList, setRepoList] = useState('');
+  // const [TotalrepoList, setTotalRepoList] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [totalCount, setTotalCount] = useState(0);
-  const [countPerPage, setCountPerPage] = useState(10);
+  const [countPerPage, setCountPerPage] = useState(100);
 
   const [paginationKeyword, setPaginationKeyword] = useState('first');
   const [paginationString, setPaginationString] = useState('');
@@ -19,6 +20,7 @@ function App() {
   const [endCursor, setEndCursor] = useState('');
   const [hasPreviousPage, setPreviousPage] = useState(false);
   const [hasNextPage, setNextPage] = useState(false);
+  var TotalrepoList = [];
 
   const fetchData = useCallback(() => {
     fetch("https://api.github.com/graphql", {
@@ -31,6 +33,7 @@ function App() {
       .then(response => response.json()).then(data => {
         const search = data.data.search;
         const pageInfo = data.data.search.pageInfo;
+        TotalrepoList.push.apply(TotalrepoList, search.edges);
         setRepoList(search.edges);
         setTotalCount(search.repositoryCount);
         setStartCursor(pageInfo.startCursor);
@@ -45,6 +48,8 @@ function App() {
     fetchData();
   }, [fetchData]);
 
+  console.log(TotalrepoList)
+
   return (
     <div className="App container mt-5">
       <h1 className="text-primary"><i className="bi bi-diagram-2-fill"></i>Repos</h1>
@@ -58,7 +63,7 @@ function App() {
           setPaginationString(paginationString);
         }}
       />
-      <ExportCSV repo={repoList} />
+      <ExportCSV repo={TotalrepoList} />
       <SearchBox
         searchQuery={searchQuery}
         totalCount={totalCount}

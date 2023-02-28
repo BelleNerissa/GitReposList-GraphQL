@@ -14,7 +14,6 @@ const headers = [
 
 const ExportCSV = (props) => {
     const { repo } = props;
-    console.log(repo);
     return (
         <CSVLink data={repo} headers={headers}>
             Exportar para CSV

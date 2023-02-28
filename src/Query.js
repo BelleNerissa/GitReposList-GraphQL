@@ -9,6 +9,7 @@ const queryRequest = (countPerPage, searchQuery, paginationKeyword, paginationSt
                 startCursor
                 endCursor
             }
+            repositoryCount
             edges {
                 node {
                     ... on Repository {
