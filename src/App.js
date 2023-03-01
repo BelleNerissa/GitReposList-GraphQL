@@ -9,7 +9,7 @@ import ExportCSV from './exportCSV';
 
 function App() {
   const [repoList, setRepoList] = useState('');
-  // const [TotalrepoList, setTotalRepoList] = useState([]);
+  const [TotalrepoList, setTotalRepoList] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [totalCount, setTotalCount] = useState(0);
   const [countPerPage, setCountPerPage] = useState(100);
@@ -20,7 +20,6 @@ function App() {
   const [endCursor, setEndCursor] = useState('');
   const [hasPreviousPage, setPreviousPage] = useState(false);
   const [hasNextPage, setNextPage] = useState(false);
-  var TotalrepoList = [];
 
   const fetchData = useCallback(() => {
     fetch("https://api.github.com/graphql", {
@@ -33,22 +32,30 @@ function App() {
       .then(response => response.json()).then(data => {
         const search = data.data.search;
         const pageInfo = data.data.search.pageInfo;
-        TotalrepoList.push.apply(TotalrepoList, search.edges);
         setRepoList(search.edges);
         setTotalCount(search.repositoryCount);
         setStartCursor(pageInfo.startCursor);
         setEndCursor(pageInfo.endCursor);
         setPreviousPage(pageInfo.hasPreviousPage);
         setNextPage(pageInfo.hasNextPage);
+        storeData(search.edges);
       })
       .catch(e => console.error(e));
-  }, [countPerPage, searchQuery, paginationKeyword, paginationString]);
+  }, [countPerPage, searchQuery, paginationKeyword, paginationString, TotalrepoList]);
+
+  async function storeData(repoList) {
+    await repoList.map(repo => (
+      TotalrepoList.push(repo)
+    ))
+    console.log(TotalrepoList);
+    window.localStorage.setItem('TotalrepoList', JSON.stringify(TotalrepoList));
+    return TotalrepoList;
+  }
 
   useEffect(() => {
     fetchData();
   }, [fetchData]);
 
-  console.log(TotalrepoList)
 
   return (
     <div className="App container mt-5">
@@ -63,7 +70,7 @@ function App() {
           setPaginationString(paginationString);
         }}
       />
-      <ExportCSV repo={TotalrepoList} />
+      <ExportCSV  repo={JSON.parse(window.localStorage.getItem('TotalrepoList'))} />
       <SearchBox
         searchQuery={searchQuery}
         totalCount={totalCount}
